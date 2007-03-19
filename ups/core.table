@@ -1,0 +1,2 @@
+setupOptional("python")
+envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
