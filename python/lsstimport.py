@@ -1,6 +1,7 @@
 #! env python
 #
 import sys
+import dl
 import os.path
 
 import imp
@@ -53,3 +54,15 @@ class LSSTLoader:
         return imp.load_module(fullname, fd, filename, desc)
 
 sys.meta_path += [LSSTImporter()]
+
+# Ensure that duplicate allocations--particularly those related to RTTI--are
+# resolved by setting dynamical library loading flags.
+
+dlflags = 0
+if hasattr(dl, 'RTLD_GLOBAL'):  dlflags |= dl.RTLD_GLOBAL
+if hasattr(dl, 'RTLD_NOW'):  dlflags |= dl.RTLD_NOW
+
+if dlflags != 0:
+    sys.setdlopenflags(dlflags)
+
+
