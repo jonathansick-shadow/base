@@ -1,7 +1,6 @@
 #! env python
 #
 import sys
-import dl
 import os.path
 
 import imp
@@ -57,11 +56,27 @@ sys.meta_path += [LSSTImporter()]
 
 # Ensure that duplicate allocations--particularly those related to RTTI--are
 # resolved by setting dynamical library loading flags.
+RTLD_GLOBAL = -1
+RTLD_NOW = -1
+try:
+    import dl
+    if hasattr(dl, 'RTLD_GLOBAL'):  RTLD_GLOBAL = dl.RTLD_GLOBAL
+    if hasattr(dl, 'RTLD_NOW'):     RTLD_NOW    = dl.RTLD_NOW
+except ImportError:
+    # 64bit linux does not have a dl module...
+    pass
+except SystemError:
+    # ...if it does it should throw a SystemError
+    pass
 
-dlflags = 0
-if hasattr(dl, 'RTLD_GLOBAL'):  dlflags |= dl.RTLD_GLOBAL
-if hasattr(dl, 'RTLD_NOW'):  dlflags |= dl.RTLD_NOW
+if RTLD_GLOBAL < 0:
+    import lsst64defs
+    RTLD_GLOBAL = lsst64defs.RTLD_GLOBAL   # usually 0x00100
+if RTLD_NOW < 0:
+    import lsst64defs
+    RTLD_NOW = lsst64defs.RTLD_NOW         # usually 0x00002
 
+dlflags = RTLD_GLOBAL|RTLD_NOW
 if dlflags != 0:
     sys.setdlopenflags(dlflags)
 
