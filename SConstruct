@@ -14,7 +14,7 @@ if not os.environ.has_key("SCONSUTILS_DIR"):
 sys.path = [ "%s/python" % os.environ["SCONSUTILS_DIR"] ] + sys.path 
 import lsst.SConsUtils as scons
 
-env = scons.MakeEnv("core",
+env = scons.MakeEnv("base",
                     r"$HeadURL$")
 
 # make lsst64defs.py
