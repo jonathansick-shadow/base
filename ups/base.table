@@ -1,2 +1,2 @@
-setupOptional("python")
+setupRequired("scons")
 envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
