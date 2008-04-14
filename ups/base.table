@@ -1,6 +1,4 @@
 setupRequired("scons")
 
 envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
-envAppend(LD_LIBRARY_PATH, ${PRODUCT_DIR}/lib)
-envAppend(DYLD_LIBRARY_PATH, ${PRODUCT_DIR}/lib)
 
