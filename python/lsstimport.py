@@ -56,8 +56,6 @@ sys.meta_path += [LSSTImporter()]
 
 # Ensure that duplicate allocations--particularly those related to RTTI--are
 # resolved by setting dynamical library loading flags.
-RTLD_GLOBAL = -1
-RTLD_NOW = -1
 try:
     import dl
     if hasattr(dl, 'RTLD_GLOBAL'):  RTLD_GLOBAL = dl.RTLD_GLOBAL
@@ -69,15 +67,20 @@ except SystemError:
     # ...if it does it should throw a SystemError
     pass
 
-if RTLD_GLOBAL < 0:
+#
+# Be careful; messing up the dlopen flags can cause other
+# imports to fail with Bad Effects such as setting sys == None
+#
+try:
     import lsst64defs
+except ImportError, e:
+    print >> sys.stderr, "Failed to import lsst64defs; I'll create it for you"
+
+try:
     RTLD_GLOBAL = lsst64defs.RTLD_GLOBAL   # usually 0x00100
-if RTLD_NOW < 0:
-    import lsst64defs
     RTLD_NOW = lsst64defs.RTLD_NOW         # usually 0x00002
 
-dlflags = RTLD_GLOBAL|RTLD_NOW
-if dlflags != 0:
+    dlflags = RTLD_GLOBAL|RTLD_NOW
     sys.setdlopenflags(dlflags)
-
-
+except Exception, e:
+    print >> sys.stderr, "Attempting to set dlopen flags: %s" % e
