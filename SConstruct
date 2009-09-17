@@ -28,9 +28,10 @@ except (ImportError, SystemError):
         incFile = os.path.join(dir, "dlfcn.h")
         if os.path.exists(incFile):
             dlfcn = open(incFile, 'r')
+            break
 
     if not dlfcn:
-        raise Error("Unable to find dlfcn.h")
+        raise RuntimeError("Unable to find dlfcn.h")
 
     rtld = filter(lambda x: re.search(r'RTLD_GLOBAL|RTLD_NOW', x),
                   dlfcn.readlines())
