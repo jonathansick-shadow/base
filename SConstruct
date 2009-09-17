@@ -23,7 +23,15 @@ try:
 except (ImportError, SystemError):
 
     # there is no dl module: extract needed constants from system
-    dlfcn = open("/usr/include/bits/dlfcn.h", 'r')
+    dlfcn = None
+    for dir in ["/usr/include/bits", "/usr/include"]:
+        incFile = os.path.join(dir, "dlfcn.h")
+        if os.path.exists(incFile):
+            dlfcn = open(incFile, 'r')
+
+    if not dlfcn:
+        raise Error("Unable to find dlfcn.h")
+
     rtld = filter(lambda x: re.search(r'RTLD_GLOBAL|RTLD_NOW', x),
                   dlfcn.readlines())
     dlfcn.close()
