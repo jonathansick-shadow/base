@@ -17,6 +17,9 @@ import lsst.SConsUtils as scons
 env = scons.MakeEnv("base",
                     r"$HeadURL$")
 
+for d in ["doc",]:
+    SConscript(os.path.join(d, "SConscript"))
+
 # make lsst64defs.py
 try:
     import dl

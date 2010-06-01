@@ -1,0 +1,4 @@
+# -*- python -*-
+Import('env')
+
+doxy = env.Doxygen("htmlDir", "doxygen.conf")
