@@ -5,7 +5,7 @@ import os.path
 
 import imp
 
-class LSSTImporter:
+class LSSTImporter(object):
     """An importer to go on sys.meta_path that enables you to
     find a sub-module anywhere on sys.path, regardless of where its parent
     module was loaded from (requires python 2.5; cf PEP 302).
@@ -36,7 +36,7 @@ class LSSTImporter:
 
         return None
 
-class LSSTLoader:
+class LSSTLoader(object):
 
     def __init__(self, fd, filename, desc):
         self._fd = fd
