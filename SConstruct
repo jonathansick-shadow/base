@@ -66,7 +66,10 @@ env['IgnoreFiles'] = r"(~$|\.pyc$|^\.svn$)"
 
 # on installation, copy the python directory to the install dir
 #
+Alias("install", env.Install(env['prefix'], "doc"))
+Alias("install", env.Install(env['prefix'], "include"))
 Alias("install", env.Install(env['prefix'], "python"))
+Alias("install", env.Install(env['prefix'], "tests"))
 
 # on installation, copy the ups directory to the install dir
 #
