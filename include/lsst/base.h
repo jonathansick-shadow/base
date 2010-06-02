@@ -15,12 +15,12 @@
  *
  * \sa CONST_PTR
  */
-#define PTR(T) boost::shared_ptr<T>
+#define PTR(...) boost::shared_ptr<__VA_ARGS__>
 /**
  * A shared pointer to a const object
  *
  * \sa PTR
  */
-#define CONST_PTR(T) boost::shared_ptr<T const>
+#define CONST_PTR(...) boost::shared_ptr<const __VA_ARGS__>
 
 #endif

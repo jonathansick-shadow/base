@@ -1,0 +1,12 @@
+# -*- python -*-
+Import("env")
+
+import glob
+import lsst.tests
+
+for fileName in glob.glob("*.cc"):
+    env.Program(fileName, LIBS=env.getlibs("boost"))
+
+tests = lsst.tests.Control(env, verbose = True)
+
+tests.run("*.cc")

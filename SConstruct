@@ -15,9 +15,11 @@ sys.path = [ "%s/python" % os.environ["SCONSUTILS_DIR"] ] + sys.path
 import lsst.SConsUtils as scons
 
 env = scons.MakeEnv("base",
-                    r"$HeadURL$")
+                    r"$HeadURL$",
+                    [["boost", "boost/version.hpp", "boost_system:C++"],
+                     ])
 
-for d in ["doc",]:
+for d in ["doc", "tests",]:
     SConscript(os.path.join(d, "SConscript"))
 
 # make lsst64defs.py
