@@ -53,9 +53,11 @@ class LSSTImporter(object):
             dirname = os.path.join(d, apply(os.path.join, fullname.split(".")))
                                             
             if os.path.isabs(dirname) and os.path.isdir(dirname):
-                (fd, filename, desc) = \
-                           imp.find_module(name, [os.path.dirname(dirname)])
-                return LSSTLoader(fd, filename, desc)
+                try:
+                    (fd, filename, desc) = imp.find_module(name, [os.path.dirname(dirname)])
+                    return LSSTLoader(fd, filename, desc)
+                except ImportError:
+                    pass
 
         return None
 
