@@ -1,5 +1,5 @@
-setupRequired("boost")
-setupRequired("scons")
+setupRequired("boost == 1.46.1+jb0")
+setupRequired("scons == bp")
 
 envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
 
