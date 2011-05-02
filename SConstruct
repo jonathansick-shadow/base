@@ -12,12 +12,11 @@ import re
 if not os.environ.has_key("SCONSUTILS_DIR"):
     raise Exception("SCONSUTILS_DIR: environment variable not set")
 sys.path = [ "%s/python" % os.environ["SCONSUTILS_DIR"] ] + sys.path 
-import lsst.SConsUtils as scons
+import lsst.scons.SConsUtils as scons
 
 env = scons.MakeEnv("base",
                     r"$HeadURL$",
-                    [["boost", "boost/version.hpp", "boost_system:C++"],
-                     ])
+                    scons.ConfigureDependentProducts("base"))
 
 for d in ["doc", "tests",]:
     SConscript(os.path.join(d, "SConscript"))
@@ -66,15 +65,10 @@ env['IgnoreFiles'] = r"(~$|\.pyc$|^\.svn$)"
 
 # on installation, copy the python directory to the install dir
 #
-Alias("install", env.Install(env['prefix'], "doc"))
-Alias("install", env.Install(env['prefix'], "include"))
-Alias("install", env.Install(env['prefix'], "python"))
-Alias("install", env.Install(env['prefix'], "tests"))
 
-# on installation, copy the ups directory to the install dir
+env.InstallLSST(env['prefix'], ['doc', 'include', 'python', 'tests'])
+
 #
-Alias("install", env.InstallEups(env['prefix'] + "/ups",
-                                 glob.glob("ups/*.table")))
 # declare this package
 # 
 env.Declare()

@@ -5,7 +5,7 @@ import glob
 import lsst.tests
 
 for fileName in glob.glob("*.cc"):
-    env.Program(fileName, LIBS=env.getlibs("boost"))
+    env.Program(fileName, LIBS=env.getLibs("self test"))
 
 tests = lsst.tests.Control(env, verbose = True)
 
