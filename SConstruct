@@ -66,7 +66,7 @@ env['IgnoreFiles'] = r"(~$|\.pyc$|^\.svn$)"
 # on installation, copy the python directory to the install dir
 #
 
-env.InstallLSST(env['prefix'], ['doc', 'include', 'python', 'tests'])
+env.InstallLSST(env['prefix'], ['doc', 'etc', 'include', 'python', 'tests'])
 
 #
 # declare this package
