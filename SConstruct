@@ -1,6 +1,6 @@
 # -*- python -*-
 
-from lsst.sconsUtils import scripts
+from lsst.sconsUtils import scripts, env
 
 scripts.BasicSConstruct(
     packageName = "base",
