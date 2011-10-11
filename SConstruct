@@ -1,8 +1,8 @@
 # -*- python -*-
 
-import lsst.sconsUtils
+from lsst.sconsUtils import scripts
 
-env = lsst.sconsUtils.scripts.BasicSConstruct(
+scripts.BasicSConstruct(
     packageName = "base",
     versionString = r"$HeadURL$",
 )

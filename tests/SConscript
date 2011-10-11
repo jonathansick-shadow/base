@@ -1,12 +1,9 @@
 # -*- python -*-
-Import("env")
+from lsst.sconsUtils import tests, env
 
-import glob
-import lsst.sconsUtils.tests
-
-for fileName in glob.glob("*.cc"):
+for fileName in Glob("*.cc"):
     env.Program(fileName, LIBS=env.getLibs("main"))
 
-tests = lsst.sconsUtils.tests.Control(env, verbose = True)
+control = tests.Control(env, verbose = True)
 
-tests.run("*.cc")
+control.run("*.cc")
