@@ -1,5 +1,7 @@
 setupRequired("boost")
-setupRequired("scons")
-setupOptional("doxygen")
+if (type == build) {
+   setupRequired("scons")
+   setupOptional("doxygen")
+}
 
 envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
