@@ -1,8 +1,8 @@
 # -*- python -*-
 
-from lsst.sconsUtils import scripts, env
+from lsst.sconsUtils import scripts, env, targets
 
-scripts.BasicSConstruct(
+scripts.BasicSConstruct.initialize(
     packageName = "base",
     versionString = r"$HeadURL$",
 )
@@ -42,4 +42,7 @@ except (ImportError, SystemError):
     now = re.sub(r'\s+.*$', '', now)
 
     m4flags = "-Dm4_RTLD_GLOBAL=%s -Dm4_RTLD_NOW=%s" % (globl, now)
-    env.M4("python/lsst64defs.py", "python/lsst64defs.py.m4", M4FLAGS=m4flags)
+    r = env.M4("python/lsst64defs.py", "python/lsst64defs.py.m4", M4FLAGS=m4flags)
+    targets["python"].extend(r)
+
+scripts.BasicSConstruct.finish()
