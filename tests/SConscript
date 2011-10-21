@@ -1,9 +1,4 @@
 # -*- python -*-
-from lsst.sconsUtils import tests, env
+from lsst.sconsUtils import scripts
 
-for fileName in Glob("*.cc"):
-    env.Program(fileName, LIBS=env.getLibs("main"))
-
-control = tests.Control(env, verbose = True)
-
-control.run("*.cc")
+scripts.BasicSConscript.tests()
