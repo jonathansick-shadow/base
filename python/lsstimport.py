@@ -41,13 +41,19 @@ except SystemError:
     # ...if it does it should throw a SystemError
     pass
 
-if RTLD_GLOBAL < 0:
-    import lsst64defs
-    RTLD_GLOBAL = lsst64defs.RTLD_GLOBAL   # usually 0x00100
-if RTLD_NOW < 0:
-    import lsst64defs
-    RTLD_NOW = lsst64defs.RTLD_NOW         # usually 0x00002
+try:
+    if RTLD_GLOBAL < 0:
+        import lsst64defs
+        RTLD_GLOBAL = lsst64defs.RTLD_GLOBAL   # usually 0x00100
+    if RTLD_NOW < 0:
+        import lsst64defs
+        RTLD_NOW = lsst64defs.RTLD_NOW         # usually 0x00002
+    dlflags = RTLD_GLOBAL|RTLD_NOW
+    if dlflags != 0:
+        sys.setdlopenflags(dlflags)
+except ImportError:
+    sys.stderr.write(
+        "Could not import lsst64defs; please ensure the base package has been built (not just setup).\n"
+    )
 
-dlflags = RTLD_GLOBAL|RTLD_NOW
-if dlflags != 0:
-    sys.setdlopenflags(dlflags)
+    
