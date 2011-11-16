@@ -45,6 +45,4 @@ except (ImportError, SystemError):
     r = env.M4("python/lsst64defs.py", "python/lsst64defs.py.m4", M4FLAGS=m4flags)
     targets["python"].extend(r)
 
-targets["python"].extend(env.VersionModule("python/lsst/base.py"))
-
 scripts.BasicSConstruct.finish()
