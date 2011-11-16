@@ -2,10 +2,7 @@
 
 from lsst.sconsUtils import scripts, env, targets
 
-scripts.BasicSConstruct.initialize(
-    packageName = "base",
-    versionString = r"$HeadURL$",
-)
+scripts.BasicSConstruct.initialize(packageName = "base")
 
 # make lsst64defs.py
 import os.path
