@@ -1,0 +1,8 @@
+
+# /
+/.*
+/config.log
+
+# /python/
+/python/*.pyc
+/python/lsst64defs.py
