@@ -1,12 +1,4 @@
 # -*- python -*-
-Import("env")
+from lsst.sconsUtils import scripts
 
-import glob
-import lsst.tests
-
-for fileName in glob.glob("*.cc"):
-    env.Program(fileName, LIBS=env.getlibs("boost"))
-
-tests = lsst.tests.Control(env, verbose = True)
-
-tests.run("*.cc")
+scripts.BasicSConscript.tests()

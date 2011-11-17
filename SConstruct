@@ -1,28 +1,13 @@
 # -*- python -*-
-#
-# Setup our environment
-#
-import glob
-import sys
-import os
-import re
 
-# ensure that we can find SConsUtils
-#
-if not os.environ.has_key("SCONSUTILS_DIR"):
-    raise Exception("SCONSUTILS_DIR: environment variable not set")
-sys.path = [ "%s/python" % os.environ["SCONSUTILS_DIR"] ] + sys.path 
-import lsst.SConsUtils as scons
+from lsst.sconsUtils import scripts, env, targets
 
-env = scons.MakeEnv("base",
-                    r"$HeadURL$",
-                    [["boost", "boost/version.hpp", "boost_system:C++"],
-                     ])
-
-for d in ["doc", "tests",]:
-    SConscript(os.path.join(d, "SConscript"))
+scripts.BasicSConstruct.initialize(packageName = "base")
 
 # make lsst64defs.py
+import os.path
+import re
+
 try:
     import dl
 except (ImportError, SystemError):
@@ -54,32 +39,7 @@ except (ImportError, SystemError):
     now = re.sub(r'\s+.*$', '', now)
 
     m4flags = "-Dm4_RTLD_GLOBAL=%s -Dm4_RTLD_NOW=%s" % (globl, now)
-    env.M4("python/lsst64defs.py", "python/lsst64defs.py.m4", M4FLAGS=m4flags)
-    
-#
-# Install things
-#
+    r = env.M4("python/lsst64defs.py", "python/lsst64defs.py.m4", M4FLAGS=m4flags)
+    targets["python"].extend(r)
 
-# files to ignore when copying files into installation dir
-#
-env['IgnoreFiles'] = r"(~$|\.pyc$|^\.svn$)"
-
-# on installation, copy the python directory to the install dir
-#
-Alias("install", env.Install(env['prefix'], "doc"))
-Alias("install", env.Install(env['prefix'], "include"))
-Alias("install", env.Install(env['prefix'], "python"))
-Alias("install", env.Install(env['prefix'], "tests"))
-
-# on installation, copy the ups directory to the install dir
-#
-Alias("install", env.InstallEups(env['prefix'] + "/ups",
-                                 glob.glob("ups/*.table")))
-# declare this package
-# 
-env.Declare()
-
-env.Help("""
-A package that provides the lsst python module which includes a custom
-loader.  
-""")
+scripts.BasicSConstruct.finish()
