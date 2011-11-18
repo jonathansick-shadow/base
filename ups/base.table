@@ -1,5 +1,5 @@
-setupRequired("boost")
-setupRequired("scons")
+setupRequired(boost >= 1.47.0)
+setupRequired(sconsUtils >= 4.6.0.6)
+setupOptional(doxygen >= 1.7.5.1)
 
 envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
-
