@@ -4,10 +4,7 @@ from lsst.sconsUtils import scripts, env, targets, utils
 
 scripts.BasicSConstruct.initialize(packageName = "base")
 
-# make lsst64defs.py
-import os.path
-import re
-import subprocess
+# Generate lsst64defs.py
 
 try:
     import dl
