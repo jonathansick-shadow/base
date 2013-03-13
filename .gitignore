@@ -16,4 +16,5 @@ doc/base.inc
 tests/.tests
 tests/ptr
 tests/testModuleImporter1
+tests/testModuleImporterLib.py
 *_wrap.cc
