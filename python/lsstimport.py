@@ -56,4 +56,9 @@ except ImportError:
         "Could not import lsst64defs; please ensure the base package has been built (not just setup).\n"
     )
 
-    
+try:
+    import lsstcppimport
+except ImportError:
+        sys.stderr.write(
+        "Could not import lsstcppimport; please ensure the base package has been built (not just setup).\n"
+    )

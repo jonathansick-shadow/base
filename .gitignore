@@ -8,9 +8,13 @@ config.log
 *.pyc
 python/lsst/base/version.py
 python/lsst64defs.py
+python/lsstcppimport.py
 doc/html
 doc/doxygen.conf
 doc/base.tag
 doc/base.inc
 tests/.tests
 tests/ptr
+tests/testModuleImporter1
+tests/testModuleImporterLib.py
+*_wrap.cc
