@@ -25,7 +25,7 @@
 #
 import sys
 import os.path
-
+'''
 # Ensure that duplicate allocations--particularly those related to RTTI--are
 # resolved by setting dynamical library loading flags.
 RTLD_GLOBAL = -1
@@ -50,12 +50,13 @@ try:
         RTLD_NOW = lsst64defs.RTLD_NOW         # usually 0x00002
     dlflags = RTLD_GLOBAL|RTLD_NOW
     if dlflags != 0:
-        sys.setdlopenflags(dlflags)
+        #sys.setdlopenflags(dlflags)
+        pass
 except ImportError:
     sys.stderr.write(
         "Could not import lsst64defs; please ensure the base package has been built (not just setup).\n"
     )
-
+'''
 try:
     import lsstcppimport
 except ImportError:
