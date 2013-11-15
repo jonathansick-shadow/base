@@ -25,8 +25,8 @@
 #
 import sys
 import imp
-import os.path
-import pkgutil
+import functools
+import re
 
 # Ensure that duplicate allocations--particularly those related to RTTI--are
 # resolved by setting dynamical library loading flags.
@@ -62,33 +62,21 @@ except ImportError:
         "Could not import lsst64defs; please ensure the base package has been built (not just setup).\n"
     )
 
-class SwiggedImporter(object):
-    def find_module(self, fullname, path=None):
-        if fullname.endswith('Lib'):
-            self.path = path
-            return self
-        return None
-        
-    def load_module(self, name):
-        if name in sys.modules:
-            return sys.modules[name]  #already loaded
-        #imp.find_module doesn't do recursive nested imports, but thanks
-        #to pkgutil.extend_path, the path should include all levels.
-        #Just load the final module
-        part = name.split('.')[-1] 
-        module_info = imp.find_module(part, self.path)
-
-        #Set the flags
+orig_imp_load_module = imp.load_module
+@functools.wraps(orig_imp_load_module)
+def imp_load_module(name, *args):
+    path = args[1]
+    #Find all swigged LSST libs.  Does _lsstcppimport need to be wrapped?
+    if re.match(r'.*lsst.*_\w+Lib\.so', path) is not None:
+        #Set flags
         sys.setdlopenflags(DLFLAGS)
-        module = imp.load_module(name, *module_info)
-        #Re-set flags to original
+        module = orig_imp_load_module(name, *args)
+        #Set original flags
         sys.setdlopenflags(ORIGDLFLAGS)
-        sys.modules[name] = module
-        return module
-
-sys.meta_path = [SwiggedImporter()]
-
-
+    else:
+        module = orig_imp_load_module(name, *args)
+    return module
+imp.load_module = imp_load_module    
 
 try:
     import lsstcppimport
