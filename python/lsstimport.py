@@ -24,12 +24,15 @@
 
 #
 import sys
+import imp
 import os.path
-'''
+import pkgutil
+
 # Ensure that duplicate allocations--particularly those related to RTTI--are
 # resolved by setting dynamical library loading flags.
 RTLD_GLOBAL = -1
 RTLD_NOW = -1
+ORIGDLFLAGS = sys.getdlopenflags()
 try:
     import dl
     if hasattr(dl, 'RTLD_GLOBAL'):  RTLD_GLOBAL = dl.RTLD_GLOBAL
@@ -48,15 +51,45 @@ try:
     if RTLD_NOW < 0:
         import lsst64defs
         RTLD_NOW = lsst64defs.RTLD_NOW         # usually 0x00002
-    dlflags = RTLD_GLOBAL|RTLD_NOW
+    DLFLAGS = RTLD_GLOBAL|RTLD_NOW
+    '''
     if dlflags != 0:
         #sys.setdlopenflags(dlflags)
         pass
+    '''
 except ImportError:
     sys.stderr.write(
         "Could not import lsst64defs; please ensure the base package has been built (not just setup).\n"
     )
-'''
+
+class SwiggedImporter(object):
+    def find_module(self, fullname, path=None):
+        if fullname.endswith('Lib'):
+            self.path = path
+            return self
+        return None
+        
+    def load_module(self, name):
+        if name in sys.modules:
+            return sys.modules[name]  #already loaded
+        #imp.find_module doesn't do recursive nested imports, but thanks
+        #to pkgutil.extend_path, the path should include all levels.
+        #Just load the final module
+        part = name.split('.')[-1] 
+        module_info = imp.find_module(part, self.path)
+
+        #Set the flags
+        sys.setdlopenflags(DLFLAGS)
+        module = imp.load_module(name, *module_info)
+        #Re-set flags to original
+        sys.setdlopenflags(ORIGDLFLAGS)
+        sys.modules[name] = module
+        return module
+
+sys.meta_path = [SwiggedImporter()]
+
+
+
 try:
     import lsstcppimport
 except ImportError:
