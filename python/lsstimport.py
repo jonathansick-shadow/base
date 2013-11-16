@@ -52,11 +52,6 @@ try:
         import lsst64defs
         RTLD_NOW = lsst64defs.RTLD_NOW         # usually 0x00002
     DLFLAGS = RTLD_GLOBAL|RTLD_NOW
-    '''
-    if dlflags != 0:
-        #sys.setdlopenflags(dlflags)
-        pass
-    '''
 except ImportError:
     sys.stderr.write(
         "Could not import lsst64defs; please ensure the base package has been built (not just setup).\n"
@@ -79,7 +74,7 @@ def imp_load_module(name, *args):
     else:
         module = orig_imp_load_module(name, *args)
     return module
-imp.load_module = imp_load_module    
+imp.load_module = imp_load_module
 
 try:
     import lsstcppimport
