@@ -65,21 +65,10 @@ except ImportError:
 orig_imp_load_module = imp.load_module
 @functools.wraps(orig_imp_load_module)
 def imp_load_module(name, *args):
-    def splitPath(path):
-        pathParts = []
-        path, tail = os.path.split(path)
-        pathParts.append(tail)
-        while tail:
-            path, tail = os.path.split(path)
-            if tail:
-                pathParts.append(tail)
-        pathParts.reverse()
-        return pathParts
-
-    pathParts = splitPath(args[1])
+    pathParts = args[1].split(os.path.sep)
     #Find all swigged LSST libs.  Does _lsstcppimport need to be wrapped?
     if 'lsst' in pathParts[:-1] and pathParts[-1].startswith('_') and \
-            (pathParts[-1].endswith('so') or pathParts[-1].endswith('dylib')):
+            (pathParts[-1].endswith('.so') or pathParts[-1].endswith('.dylib')):
         #Set flags
         sys.setdlopenflags(DLFLAGS)
         try:
