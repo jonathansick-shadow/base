@@ -26,7 +26,7 @@
 import sys
 import imp
 import functools
-import re
+import os.path
 
 # Ensure that duplicate allocations--particularly those related to RTTI--are
 # resolved by setting dynamical library loading flags.
@@ -65,14 +65,28 @@ except ImportError:
 orig_imp_load_module = imp.load_module
 @functools.wraps(orig_imp_load_module)
 def imp_load_module(name, *args):
-    path = args[1]
+    def splitPath(path):
+        pathParts = []
+        path, tail = os.path.split(path)
+        pathParts.append(tail)
+        while tail:
+            path, tail = os.path.split(path)
+            if tail:
+                pathParts.append(tail)
+        pathParts.reverse()
+        return pathParts
+
+    pathParts = splitPath(args[1])
     #Find all swigged LSST libs.  Does _lsstcppimport need to be wrapped?
-    if re.match(r'.*lsst.*_\w+Lib\.so', path) is not None:
+    if 'lsst' in pathParts[:-1] and pathParts[-1].startswith('_') and \
+            (pathParts[-1].endswith('so') or pathParts[-1].endswith('dylib')):
         #Set flags
         sys.setdlopenflags(DLFLAGS)
-        module = orig_imp_load_module(name, *args)
-        #Set original flags
-        sys.setdlopenflags(ORIGDLFLAGS)
+        try:
+            module = orig_imp_load_module(name, *args)
+        finally:
+            #Set original flags
+            sys.setdlopenflags(ORIGDLFLAGS)
     else:
         module = orig_imp_load_module(name, *args)
     return module
