@@ -67,31 +67,34 @@ except ImportError:
 #rather than import.  This makes it necessary to over ride imp.load_module.
 #This was handled in ticket #3055:
 #https://dev.lsstcorp.org/trac/ticket/3055
-orig_imp_load_module = imp.load_module
-@functools.wraps(orig_imp_load_module)
-def imp_load_module(name, *args):
-    pathParts = args[1].split(os.path.sep)
-    extension = os.path.splitext(pathParts[-1])[-1]
-    #Find all swigged LSST libs.  Load _lsstcppimport.so by adding it to the EXCEPTIONLIST
-    #since it may not have lsst in the path (it's in $BASE_DIR/python, not $BASE_DIR/python/lsst).
-    #Also, look for paths that look like python/lsst as that is how to know if you are in an LSST
-    #package.
-    lsstIdx = [i for i, el in enumerate(pathParts) if el == 'python']
-    if pathParts[-1] in LIB_EXCEPTION_LIST or (extension in  SHARED_LIB_EXTENSION_LIST and pathParts[-1].startswith('_')\
-            and 'lsst' in [pathParts[i+1] for i in lsstIdx]):
-        #Get currently set flags
-        originalDLFlags = sys.getdlopenflags()
-        #Set flags
-        sys.setdlopenflags(DLFLAGS)
-        try:
+
+#Don't redefine if it's already been defined.
+if 'orig_imp_load_module' not in locals():
+    orig_imp_load_module = imp.load_module
+    @functools.wraps(orig_imp_load_module)
+    def imp_load_module(name, *args):
+        pathParts = args[1].split(os.path.sep)
+        extension = os.path.splitext(pathParts[-1])[-1]
+        #Find all swigged LSST libs.  Load _lsstcppimport.so by adding it to the EXCEPTIONLIST
+        #since it may not have lsst in the path (it's in $BASE_DIR/python, not $BASE_DIR/python/lsst).
+        #Also, look for paths that look like python/lsst as that is how to know if you are in an LSST
+        #package.
+        lsstIdx = [i for i, el in enumerate(pathParts) if el == 'python']
+        if pathParts[-1] in LIB_EXCEPTION_LIST or (extension in  SHARED_LIB_EXTENSION_LIST and pathParts[-1].startswith('_')\
+                and 'lsst' in [pathParts[i+1] for i in lsstIdx]):
+            #Get currently set flags
+            originalDLFlags = sys.getdlopenflags()
+            #Set flags
+            sys.setdlopenflags(DLFLAGS)
+            try:
+                module = orig_imp_load_module(name, *args)
+            finally:
+                #Set original flags
+                sys.setdlopenflags(originalDLFlags)
+        else:
             module = orig_imp_load_module(name, *args)
-        finally:
-            #Set original flags
-            sys.setdlopenflags(originalDLFlags)
-    else:
-        module = orig_imp_load_module(name, *args)
-    return module
-imp.load_module = imp_load_module
+        return module
+    imp.load_module = imp_load_module
 
 try:
     import lsstcppimport
