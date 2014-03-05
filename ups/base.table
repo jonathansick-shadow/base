@@ -1,7 +1,7 @@
-setupRequired(boost >= 1.47.0)
-setupRequired(sconsUtils >= 4.6.0.6)
+setupRequired(boost)
+setupRequired(sconsUtils)
 setupRequired(swig)
-setupOptional(doxygen >= 1.7.5.1)
+setupOptional(doxygen)
 
 envPrepend(LD_LIBRARY_PATH, ${PRODUCT_DIR}/lib)
 envPrepend(DYLD_LIBRARY_PATH, ${PRODUCT_DIR}/lib)
