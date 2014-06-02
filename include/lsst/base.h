@@ -29,6 +29,19 @@
  */
 #include "boost/shared_ptr.hpp"
 
+#if (defined(__cplusplus) && __cplusplus >= 201103L) || LSST_DEFINE_MAKE_UNIQUE
+/**
+ * Make a unique_ptr; to quote Herb Sutter (http://herbsutter.com/gotw/_102):
+ *   That C++11 doesn't include make_unique is partly an oversight, and it will almost certainly be added
+ *   in the * future. In the meantime, use the one provided below
+ */
+template<typename T, typename ...Args>
+std::unique_ptr<T> make_unique( Args&& ...args )
+{
+    return std::unique_ptr<T>( new T( std::forward<Args>(args)... ) );
+}
+#endif
+
 /**
  * A shared pointer to an object
  *
