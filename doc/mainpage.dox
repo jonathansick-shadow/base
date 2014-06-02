@@ -1,0 +1,65 @@
+namespace lsst {
+/**
+\mainpage lsst::base;  Basic LSST Functionality
+
+\section baseIntro Introduction
+
+Functionality that shgould always be available to any LSST code
+
+- \ref baseDebug
+*/
+
+/**
+\page baseDebug  Using lsstDebug to control debugging output
+
+The class \link lsstDebug\endlink can be used to turn on debugging output in a non-intrusive way.  For example,
+the variable \c lsstDebug.Info("lsst.meas.astrom.astrom").debug is used to control debugging output from
+the lsst.meas.astrom.astrom module.
+
+It is always safe to interrogate \c lsstDebug;  for example \c lsstDebug.Info("Robert.Hugh.Lupton").isBadPerson will return False.
+
+The convention is that the name ("lsst.meas.astrom.astrom") is the \c \__name__ of the module, so the
+source code will typically look something like:
+\code
+    import lsstDebug
+
+    print lsstDebug.Info(__name__).display
+\endcode
+which will print \c False unless \c lsstDebug.Info(\__name__).display has somehow been set to \c True.
+
+Why is this interesting?  Because you can replace \c lsstDebug.Info with your own version, \em e.g.
+if you put
+\code
+import lsstDebug
+
+def DebugInfo(name):
+    di = lsstDebug.getInfo(name)        # N.b. lsstDebug.Info(name) would call us recursively
+    if name == "foo":
+        di.display = True
+        
+    return di
+    
+lsstDebug.Info = DebugInfo
+\endcode
+into a file \b debug.py and 
+\code
+    import lsstDebug
+
+    print "display is", lsstDebug.Info(__name__).display
+\endcode
+into \b foo.py, then
+\code
+$ python -c "import foo"
+display is False
+\endcode
+but
+\code
+$ python -c "import debug; import foo"
+display is True
+\endcode
+
+The \link lsst.pipe.base.cmdLineTask.CmdLineTask command line task\endlink interface supports a
+flag \c -d to import \b debug.py from your \c PYTHONPATH.
+
+*/
+}

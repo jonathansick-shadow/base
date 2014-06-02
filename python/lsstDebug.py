@@ -31,12 +31,8 @@ E.g.
     import lsstDebug
 
     display = lsstDebug.Info(__name__).display
-will set display to False, unless display has been set:
-    display = True
-    print lsstDebug.Info(__name__).display
-will print True; this is equivalent to
+will set display to False, unless display has been set with
     lsstDebug.Info(__name__).display = True
-    print lsstDebug.Info(__name__).display
 
 Why is this interesting?  Because you can replace lsstDebug.Info with your own version, e.g.
 

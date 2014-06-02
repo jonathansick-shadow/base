@@ -24,7 +24,7 @@
 #define LSST_BASE_ModuleImporter_h_INCLUDED
 
 /**
- *  @file lsst/afw/table/io/ModuleImporter.h
+ *  @file
  *
  *  Mechanism for safely importing Python modules from C++; should not be included
  *  except by its own implementation file, the ioLib.i file, and Persistable.cc.
