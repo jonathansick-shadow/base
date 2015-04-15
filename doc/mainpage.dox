@@ -59,7 +59,7 @@ display is True
 \endcode
 
 The \link lsst.pipe.base.cmdLineTask.CmdLineTask command line task\endlink interface supports a
-flag \c --debug to import \b debug.py from your \c PYTHON_PATH (such as the bin directory of any setup package).
+flag \c --debug to import \b debug.py from your \c PYTHON_PATH
 
 */
 }
