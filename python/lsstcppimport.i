@@ -44,6 +44,11 @@ bool PythonModuleImporter::_import(std::string const & name) const {
     if (mod) {
         Py_DECREF(mod);
         return true;
+    } else {
+        // If the Python C API call returned a null pointer, it will
+        // also have set an exception.  We don't want that, because
+        // this isn't necessarily an error (that's up to the caller).
+        PyErr_Clear();
     }
     return false;
 }
