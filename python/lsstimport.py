@@ -23,9 +23,11 @@
 #
 
 #
+from __future__ import print_function
 import sys
 import imp
 import functools
+import importlib
 import os.path
 
 #List of extensions to set global flags.  Mayb need to be extended
@@ -35,31 +37,35 @@ LIB_EXCEPTION_LIST = ('_lsstcppimport.so',)
 
 # Ensure that duplicate allocations--particularly those related to RTTI--are
 # resolved by setting dynamical library loading flags.
-RTLD_GLOBAL = -1
-RTLD_NOW = -1
-try:
-    import dl
-    if hasattr(dl, 'RTLD_GLOBAL'):  RTLD_GLOBAL = dl.RTLD_GLOBAL
-    if hasattr(dl, 'RTLD_NOW'):     RTLD_NOW    = dl.RTLD_NOW
-except ImportError:
-    # 64bit linux does not have a dl module...
-    pass
-except SystemError:
-    # ...if it does it should throw a SystemError
-    pass
+RTLD_GLOBAL = None
+RTLD_NOW = None
 
-try:
-    if RTLD_GLOBAL < 0:
-        import lsst64defs
-        RTLD_GLOBAL = lsst64defs.RTLD_GLOBAL   # usually 0x00100
-    if RTLD_NOW < 0:
-        import lsst64defs
-        RTLD_NOW = lsst64defs.RTLD_NOW         # usually 0x00002
-    DLFLAGS = RTLD_GLOBAL|RTLD_NOW
-except ImportError:
-    sys.stderr.write(
-        "Could not import lsst64defs; please ensure the base package has been built (not just setup).\n"
-    )
+# For portability we try a number of different options for determining RTLD constants
+options = ('os', 'DLFCN', 'ctypes')
+for mod in options:
+    try:
+        m = importlib.import_module(mod)
+        if RTLD_GLOBAL is None and hasattr(m, "RTLD_GLOBAL"):
+            RTLD_GLOBAL = m.RTLD_GLOBAL
+        if RTLD_NOW is None and hasattr(m, "RTLD_NOW"):
+            RTLD_NOW = m.RTLD_NOW
+    except ImportError:
+        pass
+    if RTLD_GLOBAL is not None and RTLD_NOW is not None:
+        break
+
+# Failing to find RTLD_GLOBAL is definitely unexpected and needs investigation.
+if RTLD_GLOBAL is None:
+    raise NameError("RTLD_GLOBAL constant can not be determined")
+
+# RTLD_NOW will be missing on Python 2 with OS X.
+# The value is defined in dlfcn.h and on Mac and Linux has the same value:
+#    #define RTLD_NOW	0x2
+# Do not issue a warning message as this will happen on every single import.
+if RTLD_NOW is None:
+    RTLD_NOW = 2
+
+DLFLAGS = RTLD_GLOBAL|RTLD_NOW
 
 #Swigged python libraries that import other swigged python libraries need to import with RTLD_GLOBAL
 #and RTLD_NOW set.  This causes problems with symbol collisions in third party packages (notably scipy).
@@ -99,6 +105,6 @@ if 'orig_imp_load_module' not in locals():
 try:
     import lsstcppimport
 except ImportError:
-        sys.stderr.write(
-        "Could not import lsstcppimport; please ensure the base package has been built (not just setup).\n"
-    )
+    print(
+        "Could not import lsstcppimport; please ensure the base package has been built (not just setup).\n",
+        file=sys.stderr)
