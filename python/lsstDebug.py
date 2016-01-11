@@ -41,7 +41,7 @@ import lsstDebug
 def DebugInfo(name):
     di = lsstDebug.getInfo(name)        # N.b. lsstDebug.Info(name) would call us recursively
     if name == "foo":
-        di.display = True
+        di.display = dict(repair=1, background=2, calibrate=3)
 
     return di
 
@@ -61,3 +61,22 @@ lsstDebug.Info = DebugInfo
         self._dict[what] = value
 
 getInfo = Info
+
+def getDebugFrame(debugDisplay, name):
+    """
+    Attempt to extract a frame for displaying a product called `name` from the `debugDisplay` variable.
+
+    Per the above, an instance of `Info` can return an arbitrary object (or nothing) as its `display`
+    attribute. It is convenient -- though not required -- that it be a dictionary mapping data products
+    to frame numbers, as shown in the `lsstDebug.Info` example. Given such a dictionary, this function
+    extracts and returns the appropriate frame number. If `debugDisplay` is not a collection, or if
+    `name` is not found within it, we return `None`.
+
+    @param[in] debugDisplay  The contents of lsstDebug.Info(__name__).display.
+    @param[in] name          The name of the data product to be displayed.
+    @returns   A frame number
+    """
+    if hasattr(debugDisplay, "__contains__") and name in debugDisplay:
+        return debugDisplay[name]
+    else:
+        return None
