@@ -8,6 +8,7 @@ config.log
 *.pyc
 lib/libbase.*
 python/lsst/base/version.py
+python/lsst/base/threads.py
 python/lsst64defs.py
 python/lsstcppimport.py
 doc/html
