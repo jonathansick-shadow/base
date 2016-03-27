@@ -23,6 +23,8 @@
 #
 # Define a class to configure debugging information
 #
+
+
 class Info(object):
     """An object cognisant of debugging parameters appropriate for module "name"; any request for a value
 will return False unless that value has been set, either in the module or as an attribute of this object.
@@ -47,6 +49,7 @@ def DebugInfo(name):
 
 lsstDebug.Info = DebugInfo
 """
+
     def __init__(self, modname):
         import sys
         self.__dict__["_dict"] = sys.modules[modname].__dict__
@@ -61,6 +64,7 @@ lsstDebug.Info = DebugInfo
         self._dict[what] = value
 
 getInfo = Info
+
 
 def getDebugFrame(debugDisplay, name):
     """
